@@ -60,34 +60,33 @@ play_t *play_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
 float amount_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
 {
 
-    float this_amount = 0;
+    float result = 0;
     switch (play_for(performance, plays, nb_plays)->type)
     {
     case TRAGEDY:
-        this_amount = 40000;
+        result = 40000;
         if (performance->audience > 30)
         {
-            this_amount += 1000 * (performance->audience - 30);
+            result += 1000 * (performance->audience - 30);
         }
         break;
     case COMEDY:
-        this_amount = 30000;
+        result = 30000;
         if (performance->audience > 20)
         {
-            this_amount += 10000 + 500 * (performance->audience - 20);
+            result += 10000 + 500 * (performance->audience - 20);
         }
-        this_amount += 300 * performance->audience;
+        result += 300 * performance->audience;
         break;
     }
 
-    return this_amount;
+    return result;
 }
 
 void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_plays)
 {
     float total_amount = 0;
     int volume_credits = 0;
-    float this_amount = 0;
     performance_t *performance;
 
     sprintf(result, "Statement for %s\n", invoice->customer);
@@ -99,9 +98,6 @@ void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_play
         if (!performance->audience)
             continue;
 
-        this_amount = 0;
-        this_amount = amount_for(performance, plays, nb_plays);
-
         // add volume credits
         volume_credits += MAX(performance->audience - 30, 0);
 
@@ -111,8 +107,8 @@ void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_play
 
         // print line for this order
         sprintf(result, "%s %s: $%s (%d seats)\n", result, play_for(performance, plays, nb_plays)->name,
-                format_currency_number(this_amount / 100), performance->audience);
-        total_amount += this_amount;
+                format_currency_number(amount_for(performance, plays, nb_plays) / 100), performance->audience);
+        total_amount += amount_for(performance, plays, nb_plays);
     }
 
     sprintf(result, "%sAmount owed is $%s\n", result, format_currency_number(total_amount / 100));
