@@ -9,7 +9,7 @@
 #define MAX(x, y) (((x) >= (y)) ? (x) : (y))
 #define GROUP_SIZE (3)
 
-char* format_currency_number(float value)
+char *format_currency_number(float value)
 {
     static char buffer[128];
     char temp[128];
@@ -21,13 +21,15 @@ char* format_currency_number(float value)
     int frac = (int)round(fractional * 100);
 
     /* Build integer part with grouping */
-    char* p = temp + sizeof(temp) - 1;
+    char *p = temp + sizeof(temp) - 1;
     *p = '\0';
 
     int digit_count = 0;
 
-    do {
-        if (digit_count == GROUP_SIZE) {
+    do
+    {
+        if (digit_count == GROUP_SIZE)
+        {
             *--p = ',';
             digit_count = 0;
         }
@@ -43,53 +45,63 @@ char* format_currency_number(float value)
     return buffer;
 }
 
-
-float amount_for(play_t* play, performance_t* performance){
+float amount_for(play_t *play, performance_t *performance)
+{
 
     float this_amount = 0;
-        switch (play->type) {
-        case TRAGEDY:
-            this_amount = 40000;
-            if (performance->audience > 30) {
-                this_amount += 1000 * (performance->audience - 30);
-            }
-            break;
-        case COMEDY:
-            this_amount = 30000;
-            if (performance->audience > 20) {
-                this_amount += 10000 + 500 * (performance->audience - 20);
-            }
-            this_amount += 300 * performance->audience;
-            break;
+    switch (play->type)
+    {
+    case TRAGEDY:
+        this_amount = 40000;
+        if (performance->audience > 30)
+        {
+            this_amount += 1000 * (performance->audience - 30);
         }
+        break;
+    case COMEDY:
+        this_amount = 30000;
+        if (performance->audience > 20)
+        {
+            this_amount += 10000 + 500 * (performance->audience - 20);
+        }
+        this_amount += 300 * performance->audience;
+        break;
+    }
 
-        return this_amount;
+    return this_amount;
 }
 
-void statement(char* result, invoice_t* invoice, play_t* plays, uint32_t nb_plays)
+play_t *play_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
+{
+    play_t *play;
+    for (int j = 0; j < nb_plays; j++)
+    {
+        if (strcmp(plays[j].play_id, performance->play_id) == 0)
+        {
+            play = &plays[j];
+        }
+    }
+    return play;
+}
+void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_plays)
 {
     float total_amount = 0;
     int volume_credits = 0;
     float this_amount = 0;
-    play_t* play;
-    performance_t* performance;
+    play_t *play;
+    performance_t *performance;
 
     sprintf(result, "Statement for %s\n", invoice->customer);
 
-    for (int i = 0; i < MAX_NB_PERFORMANCES; i++) {
+    for (int i = 0; i < MAX_NB_PERFORMANCES; i++)
+    {
         performance = &invoice->performances[i];
 
         if (!performance->audience)
             continue;
 
         this_amount = 0;
-
-        for (int j = 0; j < nb_plays; j++) {
-            if (strcmp(plays[j].play_id, performance->play_id) == 0) {
-                play = &plays[j];
-            }
-        }
-
+        play = play_for(performance, plays, nb_plays);
         this_amount = amount_for(play, performance);
 
         // add volume credits
@@ -100,13 +112,11 @@ void statement(char* result, invoice_t* invoice, play_t* plays, uint32_t nb_play
             volume_credits += performance->audience / 5;
 
         // print line for this order
-        sprintf(result, "%s %s: $%s (%d seats)\n", result, play->name,
-            format_currency_number(this_amount / 100),
-            performance->audience);
+        sprintf(result, "%s %s: $%s (%d seats)\n", result, play->name, format_currency_number(this_amount / 100),
+                performance->audience);
         total_amount += this_amount;
     }
 
-    sprintf(result, "%sAmount owed is $%s\n", result,
-        format_currency_number(total_amount / 100));
+    sprintf(result, "%sAmount owed is $%s\n", result, format_currency_number(total_amount / 100));
     sprintf(result, "%sYou earned %d credits\n", result, volume_credits);
 }
