@@ -57,7 +57,7 @@ play_t *play_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
     return result;
 }
 
-float amount_for(play_t *play, performance_t *performance, play_t *plays, uint32_t nb_plays)
+float amount_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
 {
 
     float this_amount = 0;
@@ -100,7 +100,7 @@ void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_play
             continue;
 
         this_amount = 0;
-        this_amount = amount_for(play_for(performance, plays, nb_plays), performance, plays, nb_plays);
+        this_amount = amount_for(performance, plays, nb_plays);
 
         // add volume credits
         volume_credits += MAX(performance->audience - 30, 0);
