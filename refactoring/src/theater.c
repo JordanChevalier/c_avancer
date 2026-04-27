@@ -44,12 +44,24 @@ char *format_currency_number(float value)
 
     return buffer;
 }
+play_t *play_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
+{
+    play_t *result;
+    for (int j = 0; j < nb_plays; j++)
+    {
+        if (strcmp(plays[j].play_id, performance->play_id) == 0)
+        {
+            result = &plays[j];
+        }
+    }
+    return result;
+}
 
-float amount_for(play_t *play, performance_t *performance)
+float amount_for(play_t *play, performance_t *performance, play_t *plays, uint32_t nb_plays)
 {
 
     float this_amount = 0;
-    switch (play->type)
+    switch (play_for(performance, plays, nb_plays)->type)
     {
     case TRAGEDY:
         this_amount = 40000;
@@ -71,24 +83,11 @@ float amount_for(play_t *play, performance_t *performance)
     return this_amount;
 }
 
-play_t *play_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
-{
-    play_t *play;
-    for (int j = 0; j < nb_plays; j++)
-    {
-        if (strcmp(plays[j].play_id, performance->play_id) == 0)
-        {
-            play = &plays[j];
-        }
-    }
-    return play;
-}
 void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_plays)
 {
     float total_amount = 0;
     int volume_credits = 0;
     float this_amount = 0;
-    play_t *play;
     performance_t *performance;
 
     sprintf(result, "Statement for %s\n", invoice->customer);
@@ -101,19 +100,18 @@ void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_play
             continue;
 
         this_amount = 0;
-        play = play_for(performance, plays, nb_plays);
-        this_amount = amount_for(play, performance);
+        this_amount = amount_for(play_for(performance, plays, nb_plays), performance, plays, nb_plays);
 
         // add volume credits
         volume_credits += MAX(performance->audience - 30, 0);
 
         // add extra credit for every five comedy attendees
-        if (play->type == COMEDY)
+        if (play_for(performance, plays, nb_plays)->type == COMEDY)
             volume_credits += performance->audience / 5;
 
         // print line for this order
-        sprintf(result, "%s %s: $%s (%d seats)\n", result, play->name, format_currency_number(this_amount / 100),
-                performance->audience);
+        sprintf(result, "%s %s: $%s (%d seats)\n", result, play_for(performance, plays, nb_plays)->name,
+                format_currency_number(this_amount / 100), performance->audience);
         total_amount += this_amount;
     }
 
