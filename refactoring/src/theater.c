@@ -43,6 +43,29 @@ char* format_currency_number(float value)
     return buffer;
 }
 
+
+float amount_for(play_t* play, performance_t* performance){
+
+    float this_amount = 0;
+        switch (play->type) {
+        case TRAGEDY:
+            this_amount = 40000;
+            if (performance->audience > 30) {
+                this_amount += 1000 * (performance->audience - 30);
+            }
+            break;
+        case COMEDY:
+            this_amount = 30000;
+            if (performance->audience > 20) {
+                this_amount += 10000 + 500 * (performance->audience - 20);
+            }
+            this_amount += 300 * performance->audience;
+            break;
+        }
+
+        return this_amount;
+}
+
 void statement(char* result, invoice_t* invoice, play_t* plays, uint32_t nb_plays)
 {
     float total_amount = 0;
@@ -67,21 +90,7 @@ void statement(char* result, invoice_t* invoice, play_t* plays, uint32_t nb_play
             }
         }
 
-        switch (play->type) {
-        case TRAGEDY:
-            this_amount = 40000;
-            if (performance->audience > 30) {
-                this_amount += 1000 * (performance->audience - 30);
-            }
-            break;
-        case COMEDY:
-            this_amount = 30000;
-            if (performance->audience > 20) {
-                this_amount += 10000 + 500 * (performance->audience - 20);
-            }
-            this_amount += 300 * performance->audience;
-            break;
-        }
+        this_amount = amount_for(play, performance);
 
         // add volume credits
         volume_credits += MAX(performance->audience - 30, 0);
