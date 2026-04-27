@@ -56,7 +56,17 @@ play_t *play_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
     }
     return result;
 }
+int volume_credits_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
+{
+    int result = 0;
+    // add volume credits
+    result += MAX(performance->audience - 30, 0);
 
+    // add extra credit for every five comedy attendees
+    if (play_for(performance, plays, nb_plays)->type == COMEDY)
+        result += performance->audience / 5;
+    return result;
+}
 float amount_for(performance_t *performance, play_t *plays, uint32_t nb_plays)
 {
 
@@ -97,14 +107,7 @@ void statement(char *result, invoice_t *invoice, play_t *plays, uint32_t nb_play
 
         if (!performance->audience)
             continue;
-
-        // add volume credits
-        volume_credits += MAX(performance->audience - 30, 0);
-
-        // add extra credit for every five comedy attendees
-        if (play_for(performance, plays, nb_plays)->type == COMEDY)
-            volume_credits += performance->audience / 5;
-
+        volume_credits += volume_credits_for(performance, plays, nb_plays);
         // print line for this order
         sprintf(result, "%s %s: $%s (%d seats)\n", result, play_for(performance, plays, nb_plays)->name,
                 format_currency_number(amount_for(performance, plays, nb_plays) / 100), performance->audience);
