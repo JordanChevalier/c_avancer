@@ -29,11 +29,23 @@ MU_TEST(test_heap_malloc_too_large)
     mu_assert(result == NULL, "Expected NULL for allocation larger than heap size");
 }
 
+MU_TEST(test_heap_malloc_nominal)
+{
+    heap_init();
+    void *result = heap_malloc(64);
+    mu_assert(result == heap_data, "Expected non-NULL for valid allocation");
+    for (__uint8_t block_index = 0; block_index < (64 / HEAP_BLOCK_SIZE_BYTES); block_index++)
+    {
+        mu_assert_int_eq(heap_attributes[block_index], HEAP_BLOCK_USED);
+    }
+}
+
 MU_TEST_SUITE(heap_test_suite)
 {
     MU_RUN_TEST(test_check);
     MU_RUN_TEST(test_heap_malloc_null_size);
     MU_RUN_TEST(test_heap_malloc_too_large);
+    MU_RUN_TEST(test_heap_malloc_nominal);
 }
 
 int main(int argc, char *argv[])
