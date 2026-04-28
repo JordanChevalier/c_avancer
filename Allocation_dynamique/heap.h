@@ -17,4 +17,5 @@ extern __uint8_t heap_data[HEAP_SIZE_BYTES];
 extern heap_block_attribute_t heap_attributes[HEAP_NB_BLOCKS];
 void heap_init(void);
 void *heap_malloc(__uint32_t size);
+void heap_free(void *ptr, __uint32_t size);
 #endif /* __HEAP_H__ */

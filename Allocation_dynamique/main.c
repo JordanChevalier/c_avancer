@@ -60,6 +60,12 @@ MU_TEST(test_heap_malloc_double_allocation)
         mu_assert_int_eq(heap_attributes[block_index], HEAP_BLOCK_USED);
     }
 }
+MU_TEST(test_heap_free)
+{
+    heap_init();
+    void *result = heap_malloc(64);
+    heap_free(result, 64);
+}
 
 MU_TEST_SUITE(heap_test_suite)
 {

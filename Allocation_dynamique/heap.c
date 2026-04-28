@@ -46,3 +46,7 @@ void *heap_malloc(__uint32_t size)
     }
     return &heap_data[block_index * HEAP_BLOCK_SIZE_BYTES];
 }
+
+void heap_free(void *ptr, __uint32_t size)
+{
+}
