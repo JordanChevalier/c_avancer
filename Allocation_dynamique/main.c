@@ -9,6 +9,10 @@ MU_TEST(test_check)
     {
         mu_assert_int_eq(heap_data[i], 0);
     }
+    for (__uint32_t i = 0; i < HEAP_NB_BLOCKS; i++)
+    {
+        mu_assert_int_eq(heap_attributes[i], HEAP_BLOCK_FREE);
+    }
 }
 
 MU_TEST_SUITE(heap_test_suite)
