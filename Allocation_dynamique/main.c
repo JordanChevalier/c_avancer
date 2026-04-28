@@ -40,12 +40,22 @@ MU_TEST(test_heap_malloc_nominal)
     }
 }
 
+MU_TEST(test_heap_malloc_different_pointers)
+{
+    heap_init();
+    void *result1 = heap_malloc(64);
+    void *result2 = heap_malloc(64);
+
+    mu_assert(result1 != result2, "Expected different pointers for separate allocations");
+}
+
 MU_TEST_SUITE(heap_test_suite)
 {
     MU_RUN_TEST(test_check);
     MU_RUN_TEST(test_heap_malloc_null_size);
     MU_RUN_TEST(test_heap_malloc_too_large);
     MU_RUN_TEST(test_heap_malloc_nominal);
+    MU_RUN_TEST(test_heap_malloc_different_pointers);
 }
 
 int main(int argc, char *argv[])
