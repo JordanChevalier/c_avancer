@@ -49,6 +49,18 @@ MU_TEST(test_heap_malloc_different_pointers)
     mu_assert(result1 != result2, "Expected different pointers for separate allocations");
 }
 
+MU_TEST(test_heap_malloc_double_allocation)
+{
+    heap_init();
+    void *result1 = heap_malloc(64);
+    void *result2 = heap_malloc(64);
+
+    for (__uint8_t block_index = 0; block_index < (128 / HEAP_BLOCK_SIZE_BYTES); block_index++)
+    {
+        mu_assert_int_eq(heap_attributes[block_index], HEAP_BLOCK_USED);
+    }
+}
+
 MU_TEST_SUITE(heap_test_suite)
 {
     MU_RUN_TEST(test_check);
@@ -56,6 +68,7 @@ MU_TEST_SUITE(heap_test_suite)
     MU_RUN_TEST(test_heap_malloc_too_large);
     MU_RUN_TEST(test_heap_malloc_nominal);
     MU_RUN_TEST(test_heap_malloc_different_pointers);
+    MU_RUN_TEST(test_heap_malloc_double_allocation);
 }
 
 int main(int argc, char *argv[])
