@@ -22,9 +22,18 @@ MU_TEST(test_heap_malloc_null_size)
     mu_assert(result == NULL, "Expected NULL for zero size allocation");
 }
 
+MU_TEST(test_heap_malloc_too_large)
+{
+    heap_init();
+    void *result = heap_malloc(HEAP_SIZE_BYTES + 1);
+    mu_assert(result == NULL, "Expected NULL for allocation larger than heap size");
+}
+
 MU_TEST_SUITE(heap_test_suite)
 {
     MU_RUN_TEST(test_check);
+    MU_RUN_TEST(test_heap_malloc_null_size);
+    MU_RUN_TEST(test_heap_malloc_too_large);
 }
 
 int main(int argc, char *argv[])
