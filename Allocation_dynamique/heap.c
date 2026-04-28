@@ -23,6 +23,7 @@ void *heap_malloc(__uint32_t size)
 
     for (block_index = 0; block_index < HEAP_NB_BLOCKS;)
     {
+        uint8_t found = 1;
         for (uint32_t free_block_index = 0; free_block_index < nb_blocks_needed; free_block_index++)
         {
             if (block_index + free_block_index >= HEAP_NB_BLOCKS)
@@ -31,10 +32,12 @@ void *heap_malloc(__uint32_t size)
             if (heap_attributes[block_index + free_block_index] == HEAP_BLOCK_USED)
             {
                 block_index++; // Skip the used blocks
+                found = 0;
                 break;
             }
         }
-        break; // Found a suitable block
+        if (found)
+            break; // Found a suitable block
     }
 
     for (uint32_t i = 0; i < nb_blocks_needed; i++)
