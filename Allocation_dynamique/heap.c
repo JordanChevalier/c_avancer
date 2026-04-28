@@ -1,17 +1,21 @@
 #include "heap.h"
 
 heap_block_attribute_t heap_attributes[HEAP_NB_BLOCKS];
-__uint8_t heap_data[HEAP_SIZE_BYTES];
+uint8_t heap_data[HEAP_SIZE_BYTES];
 
 void heap_init(void)
 {
-    for (__uint32_t i = 0; i < HEAP_SIZE_BYTES; i++)
+    for (uint32_t i = 0; i < HEAP_SIZE_BYTES; i++)
     {
         heap_data[i] = 0;
     }
+    for (uint32_t i = 0; i < HEAP_NB_BLOCKS; i++)
+    {
+        heap_attributes[i] = HEAP_BLOCK_FREE;
+    }
 }
 
-void *heap_malloc(__uint32_t size)
+void *heap_malloc(uint32_t size)
 {
     uint32_t block_index;
     if (size == 0 || size > HEAP_SIZE_BYTES)
@@ -47,6 +51,12 @@ void *heap_malloc(__uint32_t size)
     return &heap_data[block_index * HEAP_BLOCK_SIZE_BYTES];
 }
 
-void heap_free(void *ptr, __uint32_t size)
+void heap_free(void *ptr, uint32_t size)
 {
+    uint32_t nb_block_needed = (size + HEAP_BLOCK_SIZE_BYTES - 1) / HEAP_BLOCK_SIZE_BYTES;
+    uint32_t block_index = ((uint8_t *)ptr - heap_data) / HEAP_BLOCK_SIZE_BYTES;
+    for (uint32_t i = 0; i < nb_block_needed; i++)
+    {
+        heap_attributes[block_index + i] = HEAP_BLOCK_FREE;
+    }
 }

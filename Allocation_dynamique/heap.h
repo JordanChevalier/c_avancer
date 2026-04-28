@@ -13,9 +13,9 @@ typedef enum
 #define HEAP_NB_BLOCKS 1024
 #define HEAP_SIZE_BYTES (HEAP_NB_BLOCKS * HEAP_BLOCK_SIZE_BYTES)
 
-extern __uint8_t heap_data[HEAP_SIZE_BYTES];
+extern uint8_t heap_data[HEAP_SIZE_BYTES];
 extern heap_block_attribute_t heap_attributes[HEAP_NB_BLOCKS];
 void heap_init(void);
-void *heap_malloc(__uint32_t size);
-void heap_free(void *ptr, __uint32_t size);
+void *heap_malloc(uint32_t size);
+void heap_free(void *ptr, uint32_t size);
 #endif /* __HEAP_H__ */
