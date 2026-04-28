@@ -1,6 +1,8 @@
 #ifndef __HEAP_H__
 #define __HEAP_H__
+#include <stddef.h>
 #include <stdint.h>
+
 typedef enum
 {
     HEAP_BLOCK_FREE = 0,
@@ -14,5 +16,5 @@ typedef enum
 extern __uint8_t heap_data[HEAP_SIZE_BYTES];
 extern heap_block_attribute_t heap_attributes[HEAP_NB_BLOCKS];
 void heap_init(void);
-
+void *heap_malloc(__uint32_t size);
 #endif /* __HEAP_H__ */

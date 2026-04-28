@@ -10,3 +10,8 @@ void heap_init(void)
         heap_data[i] = 0;
     }
 }
+
+void *heap_malloc(__uint32_t size)
+{
+    return NULL;
+}

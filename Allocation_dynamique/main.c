@@ -15,6 +15,13 @@ MU_TEST(test_check)
     }
 }
 
+MU_TEST(test_heap_malloc_null_size)
+{
+    heap_init();
+    void *result = heap_malloc(0);
+    mu_assert(result == NULL, "Expected NULL for zero size allocation");
+}
+
 MU_TEST_SUITE(heap_test_suite)
 {
     MU_RUN_TEST(test_check);
