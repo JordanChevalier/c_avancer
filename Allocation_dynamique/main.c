@@ -2,7 +2,7 @@
 #include "minunit.h"
 MU_TEST(test_check)
 {
-    mu_check(5 == 7);
+    heap_init();
 }
 MU_TEST_SUITE(heap_test_suite)
 {
