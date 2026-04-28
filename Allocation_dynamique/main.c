@@ -75,6 +75,7 @@ MU_TEST_SUITE(heap_test_suite)
     MU_RUN_TEST(test_heap_malloc_nominal);
     MU_RUN_TEST(test_heap_malloc_different_pointers);
     MU_RUN_TEST(test_heap_malloc_double_allocation);
+    MU_RUN_TEST(test_heap_free);
 }
 
 int main(int argc, char *argv[])
